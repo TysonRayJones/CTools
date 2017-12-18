@@ -7,6 +7,7 @@ The header file
 ```
 provides a single function `getMemory` which returns the current and peak, 
 real and virtual memories (in bytes, accurate to ~kilobytes) used by your C code's Linux process.
+An equivalent module for Python can be found [here](https://github.com/TysonRayJones/PythonTools/tree/master/memory).
 
 Call via
 ```C
