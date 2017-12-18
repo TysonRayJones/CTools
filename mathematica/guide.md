@@ -1,7 +1,7 @@
 # Generate Mathematica Associations in C
 
 The header file
-```
+```C
 #include "mmaformatter.h"
 ```
 provides functions for converting C data structures to strings of Mathematica objects, and producing
