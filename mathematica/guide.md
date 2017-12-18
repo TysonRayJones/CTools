@@ -5,7 +5,7 @@ The header file
 #include "mmaformatter.h"
 ```
 provides functions for converting C data structures to strings of Mathematica objects, and producing
-files which Mathematica can read through `Get` as an [association](http://reference.wolfram.com/language/ref/Association.html).
+files which Mathematica can read through `Get` as an [association](http://reference.wolfram.com/language/ref/Association.html). An equivalent module in Python can be found [here](https://github.com/TysonRayJones/PythonTools/blob/master/mathematica/guide.md).
 
 For example,
 ```C
