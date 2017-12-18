@@ -1,2 +1,2 @@
 # CTools
-Tools I've written in C which are useful/necessary for my research
+Here are a collection of scripts I've written in C which are useful/necessary for my research
