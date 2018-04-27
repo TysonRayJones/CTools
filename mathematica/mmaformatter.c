@@ -40,6 +40,7 @@ char* getScientificNotation(double number, int precision) {
 	
 	// build sci-not string with *10^ by...
 	char *string = malloc(newStrSize + 1); // NULL
+	memset(string, 0x00, newStrSize+1);
 	
 	// copying old chars up until e
 	int rawInd=0;
