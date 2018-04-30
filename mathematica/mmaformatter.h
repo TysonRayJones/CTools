@@ -43,6 +43,26 @@ char* convertDoubleArrToMMA(double* array, int length, int precision);
 FILE* openAssocWrite(char* filename);
 
 /**
+ * returns a file handle to be passed to subsequent functions for
+ * writing data to a MMA Association, which appends elements to the
+ * existing assoc in filename. File handle must be eventually
+ * passed to closeAssocWrite or closeAssocAppend
+ * 
+ * @brief begins appending to an existing association in a file
+ * @param filename		name of the file to containing the existing assoc
+ * 						The assocation is read into MMA by Get[filename]
+ * @return 				a file handle to pass to subsequent Association
+ * 						Write functions, and which must be eventually
+ * 						passed to closeAssocWrite or closeAssocAppend
+ */
+FILE* openAssocAppend(char* filename);
+
+/**
+ * @brief equivalent to closeAssocWrite
+ */
+void closeAssocAppend(FILE* file);
+
+/**
  * @brief adds an int to the association
  * @param file		file handle returned by openAssocWrite
  * @param keyname	key to add to the association
@@ -95,6 +115,31 @@ void writeUnsignedLongArrToAssoc(FILE* file, char* keyname, unsigned long *arr, 
  * @param precision	number of digits after decimal in sci-not
  */
 void writeDoubleArrToAssoc(FILE* file, char* keyname, double* arr, int length, int precision);
+
+/**
+ * @brief adds a once-nested MMA array of sci-not numbers to the association
+ * @param file			file handle returned by openAssocWrite
+ * @param keyname		key to add to the association
+ * @param arr			nested array of doubles to convert to sci-not
+ * @param outerLength	length of the outer list
+ * @param innerLength	lenght of every inner list
+ * @param precision	number of digits after decimal in sci-not
+ */
+void writeOnceNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, double** arr, int outerLength, int innerLength, int precision
+);
+
+/**
+ * @brief adds a numDimensions-nested MMA array of sci-not numbers to the association
+ * @param file			file handle returned by openAssocWrite
+ * @param keyname		key to add to the association
+ * @param arr			nested array of doubles to convert to sci-not
+ * @param lengths		array of length of each dimension
+ * @param precision	number of digits after decimal in sci-not
+ */
+void writeNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int precision
+);
 
 /**
  * @brief formats and finalises the association, so it is ready
