@@ -48,6 +48,7 @@ char* getScientificNotation(double number, int precision) {
 		string[rawInd] = rawStr[rawInd];
 		rawInd += 1;
 	}
+	
 	// copying *10^ over
 	for (int copyInd=0; copyInd < numBase10Chars; copyInd++)
 		string[rawInd+copyInd] = BASE_TEN_FORMAT[copyInd];
@@ -161,6 +162,70 @@ void writeDoubleArrToAssoc(FILE* file, char* keyname, double* arr, int length, i
 }
 
 
+void writeOnceNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, double** arr, int outerLength, int innerLength, int precision) 
+{
+	
+	// open outer list
+	fprintf(file, "\"%s\" -> {\n", keyname);
+	
+	// write each inner list to file with trailing comma and newline
+	for (int i=0; i < outerLength; i++) {
+		char* arrStr = convertDoubleArrToMMA(arr[i], innerLength, precision);
+		fprintf(file, "%s,\n", arrStr);
+	}
+	
+	// delete trailing newline, comma
+	fseek(file, -2, SEEK_END);
+	
+	// closer outer list
+	fprintf(file, "\n},\n");
+}
+
+
+
+void writeNestedDoubleArr(
+	FILE* file, void* arr, int numDimensions, int* lengths, int lengthInd, int precision
+) {
+	// base-case: write one list
+	if (numDimensions == 1) {
+		char* arrStr = convertDoubleArrToMMA((double*) arr, lengths[lengthInd], precision);
+		fprintf(file, "%s", arrStr);
+		return;
+	}
+	
+	// recursive case: wrap in list (no trailing newline)
+	fprintf(file, "{\n");
+	for (int i=0; i < lengths[lengthInd]; i++) {
+		
+		// and write each elem (possibly a pointer) as a list
+		writeNestedDoubleArr(file, *((double **) arr), numDimensions-1, lengths, lengthInd+1, precision);
+		
+		// seperate elements
+		fprintf(file, ",\n");
+	}
+	
+	// remove trailing comma and newline
+	fseek(file, -2, SEEK_END);
+	
+	// close list
+	fprintf(file, "\n}");
+}
+
+
+void writeNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int precision
+) {
+	// start assoc
+	fprintf(file, "\"%s\" -> ", keyname);
+	
+	writeNestedDoubleArr(file, arr, numDimensions, lengths, 0, precision);
+
+	// add comma and newline
+	fprintf(file, ",\n");
+}
+
+
 void writeUnsignedLongArrToAssoc(FILE* file, char* keyname, unsigned long *arr, int length) {
 	
 	fprintf(file, "\"%s\" -> {", keyname);
@@ -178,6 +243,27 @@ void closeAssocWrite(FILE* file) {
 	// restore newline and close Associonary
 	fprintf(file, "\n|>");
 	fclose(file);
+}
+
+
+/**
+ * must not be called on an empty file
+ */
+FILE* openAssocAppend(char* filename) {
+	
+	FILE* file = fopen(filename, "r+");
+	
+	// delete closing |> and newline
+	fseek(file, -3, SEEK_END);
+	
+	// write comma for previous field
+	fprintf(file, ",\n");
+	
+	return file;
+}
+
+void closeAssocAppend(FILE* file) {
+	closeAssocWrite(file);
 }
 
 
@@ -217,6 +303,8 @@ void unitTests() {
 	closeAssocWrite(file);
 	 
 }
+
+
 
 
 /*
