@@ -106,6 +106,9 @@ char* convertDoubleArrToMMA(double* array, int length, int precision) {
 				arrString[strInd + delimInd]  = ARRAY_DELIM_CHARS[delimInd];
 			strInd += sizeOfDelim;
 		}
+		
+		// free sci-not malloc
+		free(numStr);
 	}
 	
 	// write the close-array chars to the string
@@ -173,6 +176,7 @@ void writeOnceNestedDoubleListToAssoc(
 	for (int i=0; i < outerLength; i++) {
 		char* arrStr = convertDoubleArrToMMA(arr[i], innerLength, precision);
 		fprintf(file, "%s,\n", arrStr);
+		free(arrStr);
 	}
 	
 	// delete trailing newline, comma
@@ -190,6 +194,7 @@ void writeNestedDoubleList(
 	if (numDimensions == 1) {
 		char* arrStr = convertDoubleArrToMMA((double*) arr, lengths[lengthInd], precision);
 		fprintf(file, "%s", arrStr);
+		free(arrStr);
 		return;
 	}
 	
@@ -230,7 +235,9 @@ void writeNestedDoubleArr(
 ) {
 	// base-case: write inner array
 	if (lengthInd == numDimensions - 1) {
-		fprintf(file, "%s", convertDoubleArrToMMA(&(arr[arrInd]), innerTrimLength, precision));
+		char* arrStr = convertDoubleArrToMMA(&(arr[arrInd]), innerTrimLength, precision);
+		fprintf(file, "%s", arrStr);
+		free(arrStr);
 		return;
 	}
 	
