@@ -162,7 +162,7 @@ void writeDoubleArrToAssoc(FILE* file, char* keyname, double* arr, int length, i
 }
 
 
-void writeOnceNestedDoubleArrToAssoc(
+void writeOnceNestedDoubleListToAssoc(
 	FILE* file, char* keyname, double** arr, int outerLength, int innerLength, int precision) 
 {
 	
@@ -183,8 +183,7 @@ void writeOnceNestedDoubleArrToAssoc(
 }
 
 
-
-void writeNestedDoubleArr(
+void writeNestedDoubleList(
 	FILE* file, void* arr, int numDimensions, int* lengths, int lengthInd, int precision
 ) {
 	// base-case: write one list
@@ -199,7 +198,7 @@ void writeNestedDoubleArr(
 	for (int i=0; i < lengths[lengthInd]; i++) {
 		
 		// and write each elem (possibly a pointer) as a list
-		writeNestedDoubleArr(file, *((double **) arr), numDimensions-1, lengths, lengthInd+1, precision);
+		writeNestedDoubleList(file, *((double **) arr), numDimensions-1, lengths, lengthInd+1, precision);
 		
 		// seperate elements
 		fprintf(file, ",\n");
@@ -213,13 +212,60 @@ void writeNestedDoubleArr(
 }
 
 
-void writeNestedDoubleArrToAssoc(
+void writeNestedDoubleListToAssoc(
 	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int precision
 ) {
 	// start assoc
 	fprintf(file, "\"%s\" -> ", keyname);
 	
-	writeNestedDoubleArr(file, arr, numDimensions, lengths, 0, precision);
+	writeNestedDoubleList(file, arr, numDimensions, lengths, 0, precision);
+
+	// add comma and newline
+	fprintf(file, ",\n");
+}
+
+
+void writeNestedDoubleArr(
+	FILE* file, double* arr, int arrInd, int numDimensions, int* lengths, int lengthInd, int innerTrimLength, int precision
+) {
+	// base-case: write inner array
+	if (lengthInd == numDimensions - 1) {
+		fprintf(file, "%s", convertDoubleArrToMMA(&(arr[arrInd]), innerTrimLength, precision));
+		return;
+	}
+	
+	// work out arrInd jump between outer list elements
+	int lengthProd = 1;
+	for (int l=lengthInd+1; l < numDimensions; l++)
+		lengthProd *= lengths[l];
+	
+	// recursive case: iterate outer ind, wrapping inner arrays
+	fprintf(file, "{\n");
+	for (int i=0; i < lengths[lengthInd]; i++) {
+		
+		// write inner array
+		writeNestedDoubleArr(file, arr, arrInd+i*lengthProd, numDimensions, lengths, lengthInd+1, innerTrimLength, precision);
+		
+		// seperate elements
+		fprintf(file, ",\n");
+	}
+	
+	// remove trailing comma and newline
+	fseek(file, -2, SEEK_END);
+	
+	// close array
+	fprintf(file, "\n}");
+}
+
+
+
+void writeNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int innerTrimLength, int precision
+) {
+	// start assoc
+	fprintf(file, "\"%s\" -> ", keyname);
+	
+	writeNestedDoubleArr(file, (double *) arr, 0, numDimensions, lengths, 0, innerTrimLength, precision);
 
 	// add comma and newline
 	fprintf(file, ",\n");
