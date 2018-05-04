@@ -125,7 +125,7 @@ void writeDoubleArrToAssoc(FILE* file, char* keyname, double* arr, int length, i
  * @param innerLength	lenght of every inner list
  * @param precision	number of digits after decimal in sci-not
  */
-void writeOnceNestedDoubleArrToAssoc(
+void writeOnceNestedDoubleListToAssoc(
 	FILE* file, char* keyname, double** arr, int outerLength, int innerLength, int precision
 );
 
@@ -137,8 +137,22 @@ void writeOnceNestedDoubleArrToAssoc(
  * @param lengths		array of length of each dimension
  * @param precision	number of digits after decimal in sci-not
  */
-void writeNestedDoubleArrToAssoc(
+void writeNestedDoubleListToAssoc(
 	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int precision
+);
+
+/**
+ * @brief adds a numDimensions-nested MMA array of sci-not numbers to the association
+ * @param file			file handle returned by openAssocWrite
+ * @param keyname		key to add to the association
+ * @param arr			nested array of doubles to convert to sci-not
+ * @param lengths		array of length of each dimension
+ * @param innerTrimLength	
+ * 						how many of each inner-most array to keep (to trim out place-holder data)
+ * @param precision	number of digits after decimal in sci-not
+ */
+void writeNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, void* arr, int numDimensions, int* lengths, int innerTrimLength, int precision
 );
 
 /**
