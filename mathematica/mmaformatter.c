@@ -203,7 +203,7 @@ void writeNestedDoubleList(
 	for (int i=0; i < lengths[lengthInd]; i++) {
 		
 		// and write each elem (possibly a pointer) as a list
-		writeNestedDoubleList(file, *((double **) arr), numDimensions-1, lengths, lengthInd+1, precision);
+		writeNestedDoubleList(file, ((double **)[i] arr), numDimensions-1, lengths, lengthInd+1, precision);
 		
 		// seperate elements
 		fprintf(file, ",\n");
