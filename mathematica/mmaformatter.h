@@ -97,6 +97,17 @@ void writeStringToAssoc(FILE* file, char* keyname, char* string);
 void writeIntArrToAssoc(FILE* file, char* keyname, int* arr, int length);
 
 /**
+ * @brief adds a once nested array of integers, where the inner arrays have
+ * an inconsistent length, to the association
+ * @param file				file handle returned by openAssocWrite
+ * @param keyname			key to add to the association
+ * @param arr				2D array of ints to add under key
+ * @param outerLength		number of inner arrays
+ * @param innerLengths		length of each inner array
+ * @param innerSpace		the allocated size of the inner arrays 
+ */
+void writeUnevenOnceNestedIntArrToAssoc(FILE* file, char* keyname, int (*arr)[], int outerLength, int* innerLengths, int innerSpace);
+/**
  * @brief adds an array of long unsigned ints to the association 
  * 		  as a MMA array of integers
  * @param file		file handle returned by openAssocWrite
@@ -116,6 +127,20 @@ void writeUnsignedLongArrToAssoc(FILE* file, char* keyname, unsigned long *arr, 
  */
 void writeDoubleArrToAssoc(FILE* file, char* keyname, double* arr, int length, int precision);
 
+/**
+ * @brief adds a once nested array of doubles, where the inner arrays have
+ * an inconsistent length, to the association in scientific notation
+ * @param file				file handle returned by openAssocWrite
+ * @param keyname			key to add to the association
+ * @param arr				2D array of doubles
+ * @param outerLength		number of inner arrays in arr
+ * @param innerLengths		length of each inner array
+ * @param innerSpace		allocated space of each inner array
+ * @param precision		number of digits after decimal in sci-not
+ */
+void writeUnevenOnceNestedDoubleArrToAssoc(
+	FILE* file, char* keyname, double (*arr)[], int outerLength, int* innerLengths, int innerSpace, int precision);
+	
 /**
  * @brief adds a once-nested MMA array of sci-not numbers to the association
  * @param file			file handle returned by openAssocWrite
